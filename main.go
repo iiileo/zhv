@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -14,6 +15,11 @@ import (
 var (
 	style   string
 	verbose bool
+
+	// 版本信息，在构建时通过 ldflags 注入
+	Version   = "dev"
+	BuildTime = "unknown"
+	GitCommit = "unknown"
 )
 
 // rootCmd 根命令
@@ -89,6 +95,21 @@ var showConfigCmd = &cobra.Command{
 	},
 }
 
+// versionCmd 版本命令
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "显示版本信息",
+	Long:  "显示ZHV的版本信息，包括版本号、构建时间和Git提交哈希",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("ZHV (中文变量名推荐工具)\n")
+		fmt.Printf("版本: %s\n", Version)
+		fmt.Printf("构建时间: %s\n", BuildTime)
+		fmt.Printf("Git提交: %s\n", GitCommit)
+		fmt.Printf("Go版本: %s\n", runtime.Version())
+		fmt.Printf("平台: %s/%s\n", runtime.GOOS, runtime.GOARCH)
+	},
+}
+
 func init() {
 	// 根命令的标志
 	rootCmd.PersistentFlags().StringVarP(&style, "style", "s", "camel", "命名风格 (camel|pascal|snake|kebab)")
@@ -98,6 +119,9 @@ func init() {
 	configCmd.AddCommand(setConfigCmd)
 	configCmd.AddCommand(showConfigCmd)
 	rootCmd.AddCommand(configCmd)
+
+	// 版本命令
+	rootCmd.AddCommand(versionCmd)
 }
 
 func main() {

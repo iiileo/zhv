@@ -12,15 +12,51 @@ ZHV (中文变量) 是一个帮助开发者将中文词汇转换为符合编程�
 
 ## 安装
 
+### 方式 1: 下载预编译二进制文件（推荐）
+
+从 [Releases 页面](https://github.com/iiileo/zhv/releases) 下载适合您系统的二进制文件：
+
+| 操作系统 | 架构 | 下载文件 |
+|---------|------|----------|
+| Linux | x86_64 | `zhv-linux-amd64.tar.gz` |
+| Linux | ARM64 | `zhv-linux-arm64.tar.gz` |
+| macOS | x86_64 | `zhv-darwin-amd64.tar.gz` |
+| macOS | ARM64 (M1/M2) | `zhv-darwin-arm64.tar.gz` |
+| Windows | x86_64 | `zhv-windows-amd64.zip` |
+| FreeBSD | x86_64 | `zhv-freebsd-amd64.tar.gz` |
+
+**Linux/macOS 安装步骤：**
+```bash
+# 下载并解压（以 Linux x86_64 为例）
+wget https://github.com/iiileo/zhv/releases/latest/download/zhv-linux-amd64.tar.gz
+tar -xzf zhv-linux-amd64.tar.gz
+
+# 移动到 PATH 目录
+sudo mv zhv-linux-amd64 /usr/local/bin/zhv
+
+# 验证安装
+zhv --help
+```
+
+**Windows 安装步骤：**
+1. 下载 `zhv-windows-amd64.zip`
+2. 解压到任意目录
+3. 将解压目录添加到系统 PATH 环境变量
+4. 在命令提示符中运行 `zhv --help` 验证安装
+
+### 方式 2: Go 安装
+
 ```bash
 go install github.com/iiileo/zhv@latest
 ```
 
-或者从源码编译：
+### 方式 3: 从源码编译
 
 ```bash
 git clone https://github.com/iiileo/zhv.git
 cd zhv
+make build
+# 或者
 go build
 ```
 
@@ -162,14 +198,46 @@ git clone https://github.com/iiileo/zhv.git
 cd zhv
 
 # 安装依赖
+make deps
+# 或者
 go mod tidy
 
 # 构建项目
+make build
+# 或者
 go build
 
 # 运行测试
+make test
+# 或者
 go test ./...
+
+# 构建所有平台（测试跨平台编译）
+make build-all
+
+# 查看版本信息
+make version
+./zhv version
+
+# 清理构建文件
+make clean
 ```
+
+### 可用的 Make 命令
+
+| 命令 | 说明 |
+|------|------|
+| `make build` | 构建当前平台的二进制文件 |
+| `make build-all` | 构建所有支持平台的二进制文件 |
+| `make test` | 运行测试 |
+| `make deps` | 下载和整理依赖 |
+| `make clean` | 清理构建文件 |
+| `make install` | 安装到本地 (/usr/local/bin) |
+| `make uninstall` | 从本地卸载 |
+| `make version` | 显示版本信息 |
+| `make fmt` | 格式化代码 |
+| `make lint` | 运行代码检查（需要 golangci-lint） |
+| `make help` | 显示帮助信息 |
 
 ### 贡献代码
 
@@ -178,6 +246,26 @@ go test ./...
 3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 打开 Pull Request
+
+### 发布流程
+
+项目使用 GitHub Actions 进行自动化构建和发布：
+
+- **自动构建**：推送标签时自动构建所有平台的二进制文件
+- **自动发布**：创建 GitHub Release 并上传构建产物
+- **版本管理**：支持语义化版本和预发布版本
+
+详细的发布指南请参考 [RELEASE.md](RELEASE.md)。
+
+#### 快速发布
+
+```bash
+# 创建并推送标签
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+
+# GitHub Actions 会自动构建和发布
+```
 
 ## 许可证
 
